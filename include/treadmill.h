@@ -22,8 +22,8 @@ typedef struct treadmill_t {
   float targetInclination_pt;
   float maxSpeed_kmph;
   float maxInclination_pt;
+  int lubDistance_km;
   int maxEncoderCounts;
-
 } treadmill_t;
 
 //=== PUBLIC FUNCTIONS ===//

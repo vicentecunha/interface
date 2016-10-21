@@ -8,7 +8,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+//==================//
 //=== INTERRUPTS ===//
+//==================//
 
 volatile unsigned char rxByte = 0;
 volatile bool rxFlag = false;
@@ -19,13 +21,19 @@ ISR(USART_RX_vect)
   rxFlag = true;
 }
 
+//========================//
 //=== PUBLIC FUNCTIONS ===//
+//========================//
 
 // Configure uart baudrate and enable transmitter, receiver and rx interrupt.
 
-void uart_init()
+void uart_init(int baudrate)
 {
-  UBRR0 = (int)MYUBRR;
+  switch (baudrate) {
+    case 4800: UBRR0 = (int)MYUBRR_4800; break;
+    default:
+    case 9600: UBRR0 = (int)MYUBRR_9600; break;
+  }
   UCSR0B |= (1 << RXCIE0)|(1 << TXEN0)|(1 << RXEN0);
 }
 

@@ -9,8 +9,4 @@
 
 #define F_CPU 16000000UL // 16 MHz clock speed
 
-//=== TYPEDEFS ===//
-
-typedef enum {false, true} bool;
-
 #endif

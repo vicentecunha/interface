@@ -11,11 +11,13 @@
 
 typedef enum treadmill_e {
 	MAX_SPEED_16_KMPH = 0x00,
-	DEBUG = 0xF0
+	DEBUG             = 0xF0
 } treadmill_e;
 
 typedef enum protocol_e {
-	INBRAMED = 0x00,
+	INBRAMED         = 0x00,
+	TRACKMASTER_KMPH = 0x01,
+	TRACKMASTER_MPH  = 0x02
 } protocol_e;
 
 typedef struct switches_t {

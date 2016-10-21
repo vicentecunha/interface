@@ -9,12 +9,15 @@
 
 #include "main.h"
 #include "switches.h"
+#include <stdbool.h>
 
 #define CLK (F_CPU/1024)
 #define RELOAD_PERIOD(ovfPeriod_s) (0x10000UL - CLK*ovfPeriod_s);
 #define RELOAD_FREQ(ovfFreq_Hz) (0x10000UL - CLK/ovfFreq_Hz);
 
+//================//
 //=== TYPEDEFS ===//
+//================//
 
 typedef struct treadmill_t {
   float speed_kmph;
@@ -22,20 +25,26 @@ typedef struct treadmill_t {
   float targetInclination_pt;
   float maxSpeed_kmph;
   float maxInclination_pt;
-  int lubDistance_km;
   int maxEncoderCounts;
+  int lubDistance_km;
+  bool enableBelt;
+  bool cds;
 } treadmill_t;
 
+//========================//
 //=== PUBLIC FUNCTIONS ===//
+//========================//
 
 treadmill_t treadmill_init(treadmill_e treadmill);
 void treadmill_resetInclination();
 void treadmill_update(treadmill_t* myTreadmill);
 
+//=============//
 //=== FLAGS ===//
+//=============//
 
 extern volatile int encoderCounts;
 extern volatile bool intFlag;
-extern volatile int reloadValue;
+extern volatile long reloadValue;
 
 #endif

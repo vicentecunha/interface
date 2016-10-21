@@ -10,22 +10,24 @@
 #include "switches.h"
 #include "treadmill.h"
 
+//================//
 //=== TYPEDEFS ===//
+//================//
 
 typedef enum states_e {
   IDLE,
   PARSING_SPEED,
-  PARSING_INCLINATION
+  PARSING_INCLINATION,
+  PARSING_TIME,
+  PARSING_PROTOCOL,
+  PARSING_STAGE,
+  PARSING_WEIGHT
 } states_e;
 
-typedef struct serialParser_t {
-  protocol_e protocol;
-  states_e state;
-} serialParser_t;
-
+//========================//
 //=== PUBLIC FUNCTIONS ===//
+//========================//
 
-serialParser_t serialParser_init(protocol_e);
-void serialParser_parse(serialParser_t*, treadmill_t*, unsigned char);
+void serialParser_parse(protocol_e, treadmill_t*, unsigned char);
 
 #endif

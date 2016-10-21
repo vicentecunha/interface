@@ -11,11 +11,13 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+//==================//
 //=== INTERRUPTS ===//
+//==================//
 
 volatile int encoderCounts = 0;
 volatile bool intFlag = false;
-volatile int reloadValue = 0;
+volatile long reloadValue = 0;
 
 ISR(INT0_vect)
 {
@@ -35,7 +37,9 @@ ISR(TIMER1_OVF_vect)
   TCNT1 = reloadValue;
 }
 
+//=========================//
 //=== PRIVATE FUNCTIONS ===//
+//=========================//
 
 float countsToPt(int counts, int maxCounts, float maxInclination_pt)
 {
@@ -66,12 +70,15 @@ void stabilizeInclination()
   PORTB &= ~((1 << PORTB1)|(1 << PORTB0));
 }
 
+//========================//
 //=== PUBLIC FUNCTIONS ===//
+//========================//
 
 treadmill_t treadmill_init(treadmill_e treadmill)
 {
   DDRB |= (1 << DDB0)|(1 << DDB1)|(1 << DDB2); // OUTPUTS LUB / UP / DOWN
   PORTB &= ~(1 << PORTB2); // lubrification initial state
+  PORTB |= (1 << PORTB3); // silicone led pull-up
   DDRC |= (1 << DDC5)|(1 << DDC4); // INVERTER SIGNAL
   PORTC |= (1 << PORTC5);
   PORTD |= (1 << PORTD2)|(1 << PORTD3); // ENCODER PULL-UPS
@@ -87,6 +94,8 @@ treadmill_t treadmill_init(treadmill_e treadmill)
   myTreadmill.maxInclination_pt = 26;
   myTreadmill.maxEncoderCounts = 4000;
   myTreadmill.lubDistance_km = 25;
+  myTreadmill.enableBelt = false;
+  myTreadmill.cds = false;
   switch (treadmill) {
     case MAX_SPEED_16_KMPH: myTreadmill.maxSpeed_kmph = 16; break;
   }
@@ -106,13 +115,16 @@ void treadmill_resetInclination()
 
 void treadmill_update(treadmill_t* myTreadmill)
 {
-  reloadValue = RELOAD_FREQ(kmphToHz(myTreadmill->speed_kmph,
-    myTreadmill->maxSpeed_kmph, 100, 1000));
+  if (myTreadmill->enableBelt) {
+    reloadValue = RELOAD_FREQ(kmphToHz(myTreadmill->speed_kmph,
+      myTreadmill->maxSpeed_kmph, 100, 1000));
+  } else {
+    reloadValue = RELOAD_PERIOD(0);
+  }
+
   myTreadmill->inclination_pt = countsToPt(encoderCounts,
     myTreadmill->maxEncoderCounts, myTreadmill->maxInclination_pt);
-
   const float tolerance = 0.05;
-
   if (myTreadmill->inclination_pt > myTreadmill->targetInclination_pt + tolerance)
     lowerInclination();
   else if (myTreadmill->inclination_pt < myTreadmill->targetInclination_pt - tolerance)

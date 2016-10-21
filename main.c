@@ -46,17 +46,23 @@ int main()
   treadmill_t myTreadmill = treadmill_init(mySwitches.treadmill);
   sei(); // enable interrupts
   treadmill_resetInclination();
-  serialParser_t mySerialParser = serialParser_init(mySwitches.protocol);
-  uart_init();
+
+  switch(mySwitches.protocol) {
+    default:
+    case INBRAMED: uart_init(9600); break;
+    case TRACKMASTER_KMPH:
+    case TRACKMASTER_MPH: uart_init(4800); break;
+  }
+
   TCCR0B |= (1 << CS02)|(1 << CS00); // start time control, CLK = 15.625kHz
+
+  // SUPER LOOP:
 
   while (1) {
     if (mySwitches.treadmill != DEBUG) treadmill_update(&myTreadmill);
     if (rxFlag) {
       rxFlag = false;
-      serialParser_parse(&mySerialParser, &myTreadmill, rxByte);
-      //snprintf(output, 8, "%d\r\n", encoderCounts);
-      //uart_sendCstring(output);
+      serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
     }
     if (oneSecondFlag) {
       oneSecondFlag = false;

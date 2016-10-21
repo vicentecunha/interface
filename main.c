@@ -13,8 +13,11 @@
 #include <stdio.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
+#include <stdbool.h>
 
+//==================//
 //=== INTERRUPTS ===//
+//==================//
 
 volatile int oneSecondCounter = 0;
 volatile bool oneSecondFlag = false;
@@ -29,7 +32,18 @@ ISR(TIMER0_OVF_vect)
   }
 }
 
+switches_t mySwitches;
+treadmill_t myTreadmill;
+
+ISR(USART_RX_vect)
+{
+  unsigned char rxByte = UDR0;
+  serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
+}
+
+//============//
 //=== MAIN ===//
+//============//
 
 int main()
 {
@@ -42,8 +56,8 @@ int main()
     eeprom_write_byte(0,1);
   } else currentDistance_km = eeprom_read_float(currentDistance_ptr);
 
-  switches_t mySwitches = getSwitches();
-  treadmill_t myTreadmill = treadmill_init(mySwitches.treadmill);
+  mySwitches = getSwitches();
+  myTreadmill = treadmill_init(mySwitches.treadmill);
   sei(); // enable interrupts
   treadmill_resetInclination();
 
@@ -58,12 +72,8 @@ int main()
 
   // SUPER LOOP:
 
-  while (1) {
+  while (true) {
     if (mySwitches.treadmill != DEBUG) treadmill_update(&myTreadmill);
-    if (rxFlag) {
-      rxFlag = false;
-      serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
-    }
     if (oneSecondFlag) {
       oneSecondFlag = false;
       currentDistance_km += myTreadmill.speed_kmph/3600; // [km/h]/[s/h]

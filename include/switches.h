@@ -7,7 +7,9 @@
 #ifndef _switches_h_
 #define _switches_h_
 
+//================//
 //=== TYPEDEFS ===//
+//================//
 
 typedef enum treadmill_e {
 	MAX_SPEED_16_KMPH = 0x00,
@@ -25,7 +27,9 @@ typedef struct switches_t {
 	protocol_e protocol;
 } switches_t;
 
+//========================//
 //=== PUBLIC FUNCTIONS ===//
+//========================//
 
 switches_t getSwitches();
 

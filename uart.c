@@ -8,19 +8,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-//==================//
-//=== INTERRUPTS ===//
-//==================//
-
-volatile unsigned char rxByte = 0;
-volatile bool rxFlag = false;
-
-ISR(USART_RX_vect)
-{
-  rxByte = UDR0;
-  rxFlag = true;
-}
-
 //========================//
 //=== PUBLIC FUNCTIONS ===//
 //========================//

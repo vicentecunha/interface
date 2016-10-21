@@ -19,24 +19,35 @@
 //=== INTERRUPTS ===//
 //==================//
 
-volatile int oneSecondCounter = 0;
+volatile int ovfCounter1 = 0;
+volatile int ovfCounter2 = 0;
+volatile bool halfSecondFlag = false;
 volatile bool oneSecondFlag = false;
 
 ISR(TIMER0_OVF_vect)
 {
-  oneSecondCounter += 1;
+  ovfCounter1 += 1;
+  ovfCounter2 += 1;
+  const int ovfPerHalfSecond = 31;
   const int ovfPerSecond = 61; // 15625 [cnts/s] / 256 [cnts/ovf]
-  if (oneSecondCounter > ovfPerSecond) {
+
+  if (ovfCounter1 > ovfPerHalfSecond) {
+    halfSecondFlag = true;
+    ovfCounter1 = 0;
+  }
+  if (ovfCounter2 > ovfPerSecond) {
     oneSecondFlag = true;
-    oneSecondCounter = 0;
+    ovfCounter2 = 0;
   }
 }
 
 switches_t mySwitches;
 treadmill_t myTreadmill;
+volatile bool rxFlag = false;
 
 ISR(USART_RX_vect)
 {
+  rxFlag = true;
   unsigned char rxByte = UDR0;
   serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
 }
@@ -74,6 +85,13 @@ int main()
 
   while (true) {
     if (mySwitches.treadmill != DEBUG) treadmill_update(&myTreadmill);
+
+    if (halfSecondFlag) {
+      halfSecondFlag = false;
+      if (rxFlag) rxFlag = false;
+      else if (myTreadmill.cds) myTreadmill.enableBelt = false;
+    }
+
     if (oneSecondFlag) {
       oneSecondFlag = false;
       currentDistance_km += myTreadmill.speed_kmph/3600; // [km/h]/[s/h]

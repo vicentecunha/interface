@@ -129,7 +129,6 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
       uart_sendChar(ACK_AUTO_COOL_DOWN);
       myTreadmill->speed_kmph = 0;
       myTreadmill->targetInclination_pt = 0;
-      myTreadmill->enableBelt = false;
       if (txAck) uart_sendChar(AUTO_COOL_DOWN);
       break;
 

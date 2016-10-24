@@ -7,8 +7,8 @@
 #include "serialParser.h"
 #include "trackmaster.h"
 #include "uart.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 //=========================//
 //=== PRIVATE FUNCTIONS ===//

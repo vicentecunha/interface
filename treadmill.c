@@ -5,9 +5,6 @@
 */
 
 #include "treadmill.h"
-#include "main.h"
-#include "uart.h"
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 

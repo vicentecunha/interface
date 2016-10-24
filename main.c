@@ -4,16 +4,10 @@
   Date: September 2016
 */
 
-#include "main.h"
-#include "uart.h"
-#include "switches.h"
-#include "treadmill.h"
 #include "serialParser.h"
-#include <avr/interrupt.h>
-#include <stdio.h>
-#include <util/delay.h>
+#include "uart.h"
 #include <avr/eeprom.h>
-#include <stdbool.h>
+#include <avr/interrupt.h>
 
 //==================//
 //=== INTERRUPTS ===//

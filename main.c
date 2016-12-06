@@ -73,6 +73,10 @@ int main()
     case TRACKMASTER_MPH: uart_init(4800); break;
   }
 
+  // DEBUG:
+  uart_sendChar(mySwitches.protocol);
+  uart_sendChar(mySwitches.treadmill);
+
   TCCR0B |= (1 << CS02)|(1 << CS00); // start time control, CLK = 15.625kHz
 
   // SUPER LOOP:

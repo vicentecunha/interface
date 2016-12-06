@@ -122,7 +122,9 @@ void treadmill_update(treadmill_t* myTreadmill)
   myTreadmill->inclination_pt = countsToPt(encoderCounts,
     myTreadmill->maxEncoderCounts, myTreadmill->maxInclination_pt);
   const float tolerance = 0.05;
-  if (myTreadmill->inclination_pt > myTreadmill->targetInclination_pt + tolerance)
+  if (myTreadmill->targetInclination_pt <= 0 && myTreadmill->inclination_pt > tolerance)
+    treadmill_resetInclination();
+  else if (myTreadmill->inclination_pt > myTreadmill->targetInclination_pt + tolerance)
     lowerInclination();
   else if (myTreadmill->inclination_pt < myTreadmill->targetInclination_pt - tolerance)
     raiseInclination();

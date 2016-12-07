@@ -74,8 +74,7 @@ int main()
   }
 
   // DEBUG:
-  uart_sendChar(mySwitches.protocol);
-  uart_sendChar(mySwitches.treadmill);
+  uart_sendChar(mySwitches.protocol + mySwitches.treadmill);
 
   TCCR0B |= (1 << CS02)|(1 << CS00); // start time control, CLK = 15.625kHz
 

@@ -171,6 +171,13 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
       if (txAck) uart_sendChar(GET_SPEED);
       break;
 
+      case GET_ELEVATION:
+      uart_sendChar(ACK_GET_ELEVATION);
+      snprintf(txbuf, 8, "%d", 10*(myTreadmill->targetInclination_pt));
+      uart_sendCstring(txbuf);
+      if (txAck) uart_sendChar(GET_ELEVATION);
+      break;
+
       case GET_TIME:
       uart_sendChar(ACK_GET_TIME);
       for (int i = 0; i < 4; i++) uart_sendChar(0);

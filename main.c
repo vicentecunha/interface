@@ -2,6 +2,8 @@
   Interface: main.c
   Author: Vicente Cunha
   Date: September 2016
+
+  VERSÃO: WI16-26R1
 */
 
 #include "serialParser.h"
@@ -43,7 +45,8 @@ ISR(USART_RX_vect)
 {
   rxFlag = true;
   unsigned char rxByte = UDR0;
-  serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
+  if (mySwitches.treadmill == DEBUG) uart_sendChar(rxByte);
+  else serialParser_parse(mySwitches.protocol, &myTreadmill, rxByte);
 }
 
 //============//
@@ -74,7 +77,7 @@ int main()
   }
 
   // DEBUG:
-  uart_sendChar(mySwitches.protocol + mySwitches.treadmill);
+  //uart_sendChar(mySwitches.protocol + mySwitches.treadmill);
 
   TCCR0B |= (1 << CS02)|(1 << CS00); // start time control, CLK = 15.625kHz
 

@@ -19,8 +19,8 @@ volatile long reloadValue = 0;
 ISR(INT0_vect)
 {
   intFlag = true;
-  if (PIND & (1 << PIND3)) encoderCounts += 1;
-  else encoderCounts -= 1;
+  if (PIND & (1 << PIND3)) encoderCounts -= 1;
+  else encoderCounts += 1;
 }
 
 ISR(INT1_vect)
@@ -73,8 +73,8 @@ void stabilizeInclination()
 
 treadmill_t treadmill_init(treadmill_e treadmill)
 {
-  DDRB |= (1 << DDB0)|(1 << DDB1)|(1 << DDB2); // OUTPUTS LUB / UP / DOWN
-  PORTB &= ~(1 << PORTB2); // lubrification initial state
+  DDRB |= (1 << DDB0)|(1 << DDB1)|(1 << DDB2); // OUTPUTS UP / DOWN / LUB
+  PORTB &= ~((1 << PORTB2)|(1 << PORTB1)|(1 << PORTB0));
   PORTB |= (1 << PORTB3); // silicone led pull-up
   DDRC |= (1 << DDC5)|(1 << DDC4); // INVERTER SIGNAL
   PORTC |= (1 << PORTC5);

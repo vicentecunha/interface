@@ -94,6 +94,7 @@ treadmill_t treadmill_init(treadmill_e treadmill)
   myTreadmill.enableBelt = false;
   myTreadmill.cds = false;
   switch (treadmill) {
+    default:
     case MAX_SPEED_16_KMPH: myTreadmill.maxSpeed_kmph = 16; break;
   }
   return myTreadmill;

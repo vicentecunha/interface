@@ -30,6 +30,7 @@ void inbramed(treadmill_t* myTreadmill, unsigned char c)
   static states_e state = IDLE;
 
   switch (state) {
+    default:
     case IDLE:
     if (c == 0xAA) {
       myTreadmill->speed_kmph = 0;
@@ -60,7 +61,7 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
 {
   static int i = 0;
   static states_e state = IDLE;
-  static unsigned char rxbuf[8] = {0}, txbuf[8] = {0};
+  static char rxbuf[8] = {0}, txbuf[8] = {0};
   static bool txAck = false;
   float auxFloat = 0;
 
@@ -150,14 +151,14 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
       uart_sendChar(ACK_GET_ACTUAL_SPEED);
       auxFloat = myTreadmill->speed_kmph;
       if (speedUnit == MPH) auxFloat = kmphToMph(auxFloat);
-      snprintf(txbuf, 8, "%d", 10*auxFloat);
+      snprintf(txbuf, 8, "%04d", (int)(10*auxFloat));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_ACTUAL_SPEED);
       break;
 
       case GET_ACTUAL_ELEVATION:
       uart_sendChar(ACK_GET_ACTUAL_ELEVATION);
-      snprintf(txbuf, 8, "%d", 10*(myTreadmill->inclination_pt));
+      snprintf(txbuf, 8, "%04d", (int)(10*(myTreadmill->inclination_pt)));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_ACTUAL_ELEVATION);
       break;
@@ -166,14 +167,14 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
       uart_sendChar(ACK_GET_SPEED);
       auxFloat = myTreadmill->speed_kmph;
       if (speedUnit == MPH) auxFloat = kmphToMph(auxFloat);
-      snprintf(txbuf, 8, "%d", 10*auxFloat);
+      snprintf(txbuf, 8, "%04d", (int)(10*auxFloat));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_SPEED);
       break;
 
       case GET_ELEVATION:
       uart_sendChar(ACK_GET_ELEVATION);
-      snprintf(txbuf, 8, "%d", 10*(myTreadmill->targetInclination_pt));
+      snprintf(txbuf, 8, "%04d", (int)(10*(myTreadmill->targetInclination_pt)));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_ELEVATION);
       break;

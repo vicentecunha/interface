@@ -56,7 +56,6 @@ ISR(USART_RX_vect)
 int main()
 {
   float* currentDistance_ptr = (float*)sizeof(uint8_t);
-  char output[8];
   float currentDistance_km = 0;
 
   if (!eeprom_read_byte(0)){

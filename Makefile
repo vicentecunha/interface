@@ -1,5 +1,5 @@
 CC=avr-gcc
-CFLAGS=-I$(INCDIR) -mmcu=atmega328p -Os -std=c99
+CFLAGS=-I$(INCDIR) -mmcu=atmega328p -Os -std=c99 -Wall
 LFLAGS=-Wl,-u,vfprintf -lprintf_flt -lm
 
 INCDIR=./include

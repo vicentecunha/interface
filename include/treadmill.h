@@ -11,20 +11,22 @@
 #include "switches.h"
 #include <stdbool.h>
 
-#define CLK (F_CPU/1024)
+#define CLK (F_CPU)
 #define RELOAD_PERIOD(ovfPeriod_s) (0x10000UL - CLK*ovfPeriod_s);
 #define RELOAD_FREQ(ovfFreq_Hz) (0x10000UL - CLK/ovfFreq_Hz);
+#define MIN_FREQ_Hz 200
+#define MAX_FREQ_Hz 3000
 
 //================//
 //=== TYPEDEFS ===//
 //================//
 
 typedef struct treadmill_t {
-  float speed_kmph;
-  float inclination_pt;
-  float targetInclination_pt;
-  float maxSpeed_kmph;
-  float maxInclination_pt;
+  double speed_kmph;
+  double inclination_pt;
+  double targetInclination_pt;
+  double maxSpeed_kmph;
+  double maxInclination_pt;
   int maxEncoderCounts;
   int lubDistance_km;
   bool enableBelt;

@@ -38,16 +38,15 @@ ISR(TIMER1_OVF_vect)
 //=== PRIVATE FUNCTIONS ===//
 //=========================//
 
-float countsToPt(int counts, int maxCounts, float maxInclination_pt)
+double countsToPt(int counts, int maxCounts, double maxInclination_pt)
 {
   return (counts*maxInclination_pt)/maxCounts;
 }
 
-float kmphToHz( float speed_kmph, float maxSpeed_kmph,
+double kmphToHz(double speed_kmph, double maxSpeed_kmph,
                 int minFrequency_Hz, int maxFrequency_Hz)
 {
-  return 2*((maxFrequency_Hz - minFrequency_Hz)*speed_kmph/maxSpeed_kmph +
-          minFrequency_Hz);
+  return 2*((maxFrequency_Hz - minFrequency_Hz)*speed_kmph/maxSpeed_kmph + minFrequency_Hz);
 }
 
 void lowerInclination()
@@ -82,7 +81,7 @@ treadmill_t treadmill_init(treadmill_e treadmill)
   EICRA |= (1 << ISC11)|(1 << ISC10)|(1 << ISC01)|(1 << ISC00); // rising edge
   EIMSK |= (1 << INT1)|(1 << INT0); // enable external interrupts
   TIMSK1 |= (1 << TOIE1); // enable timer OVF interrupt
-  TCCR1B |= (1 << CS12)|(1 << CS10); // start speed timer, CLK = 15.625kHz
+  TCCR1B |= (1 << CS10); // start speed timer, prescaler = 8
 
   treadmill_t myTreadmill;
   myTreadmill.speed_kmph = 0;
@@ -114,15 +113,14 @@ void treadmill_resetInclination()
 void treadmill_update(treadmill_t* myTreadmill)
 {
   if (myTreadmill->enableBelt) {
-    reloadValue = RELOAD_FREQ(kmphToHz(myTreadmill->speed_kmph,
-      myTreadmill->maxSpeed_kmph, 100, 1000));
+    reloadValue = RELOAD_FREQ(kmphToHz(myTreadmill->speed_kmph, myTreadmill->maxSpeed_kmph, MIN_FREQ_Hz, MAX_FREQ_Hz));
   } else {
     reloadValue = RELOAD_PERIOD(0);
   }
 
   myTreadmill->inclination_pt = countsToPt(encoderCounts,
     myTreadmill->maxEncoderCounts, myTreadmill->maxInclination_pt);
-  const float tolerance = 0.05;
+  const double tolerance = 0.05;
   if (myTreadmill->targetInclination_pt <= 0 && myTreadmill->inclination_pt > tolerance)
     treadmill_resetInclination();
   else if (myTreadmill->inclination_pt > myTreadmill->targetInclination_pt + tolerance)

@@ -14,19 +14,19 @@
 //=== PRIVATE FUNCTIONS ===//
 //=========================//
 
-float mphToKmph(float x)
+double mphToKmph(double x)
 {
   return x*1.60934;
 }
 
-float kmphToMph(float x)
+double kmphToMph(double x)
 {
   return x*0.621371;
 }
 
 void inbramed(treadmill_t* myTreadmill, unsigned char c)
 {
-  float auxFloat;
+  double auxDouble;
   static states_e state = IDLE;
 
   switch (state) {
@@ -41,18 +41,18 @@ void inbramed(treadmill_t* myTreadmill, unsigned char c)
 
     case PARSING_SPEED:
     state = PARSING_INCLINATION;
-    auxFloat = c/15.;
-    if (auxFloat <= myTreadmill->maxSpeed_kmph && auxFloat >= 0) {
-      myTreadmill->speed_kmph = auxFloat;
+    auxDouble = c/15.;
+    if (auxDouble <= myTreadmill->maxSpeed_kmph && auxDouble >= 0) {
+      myTreadmill->speed_kmph = auxDouble;
       myTreadmill->enableBelt = true;
     }
     break;
 
     case PARSING_INCLINATION:
     state = IDLE;
-    auxFloat = c/2.;
-    if (auxFloat <= myTreadmill->maxInclination_pt && auxFloat >= 0)
-      myTreadmill->targetInclination_pt = auxFloat;
+    auxDouble = c/2.;
+    if (auxDouble <= myTreadmill->maxInclination_pt && auxDouble >= 0)
+      myTreadmill->targetInclination_pt = auxDouble;
     break;
   }
 }
@@ -63,7 +63,7 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
   static states_e state = IDLE;
   static char rxbuf[8] = {0}, txbuf[8] = {0};
   static bool txAck = false;
-  float auxFloat = 0;
+  double auxDouble = 0;
 
   switch (state) {
     default:
@@ -149,9 +149,9 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
 
       case GET_ACTUAL_SPEED:
       uart_sendChar(ACK_GET_ACTUAL_SPEED);
-      auxFloat = myTreadmill->speed_kmph;
-      if (speedUnit == MPH) auxFloat = kmphToMph(auxFloat);
-      snprintf(txbuf, 8, "%04d", (int)(10*auxFloat));
+      auxDouble = myTreadmill->speed_kmph;
+      if (speedUnit == MPH) auxDouble = kmphToMph(auxDouble);
+      snprintf(txbuf, 8, "%04d", (int)(10*auxDouble));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_ACTUAL_SPEED);
       break;
@@ -165,9 +165,9 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
 
       case GET_SPEED:
       uart_sendChar(ACK_GET_SPEED);
-      auxFloat = myTreadmill->speed_kmph;
-      if (speedUnit == MPH) auxFloat = kmphToMph(auxFloat);
-      snprintf(txbuf, 8, "%04d", (int)(10*auxFloat));
+      auxDouble = myTreadmill->speed_kmph;
+      if (speedUnit == MPH) auxDouble = kmphToMph(auxDouble);
+      snprintf(txbuf, 8, "%04d", (int)(10*auxDouble));
       uart_sendCstring(txbuf);
       if (txAck) uart_sendChar(GET_SPEED);
       break;
@@ -245,10 +245,10 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
     if (++i > 3) {
       state = IDLE;
       i = 0;
-      auxFloat = strtoul(rxbuf, NULL, 10)/10.;
-      if (speedUnit == MPH) auxFloat = mphToKmph(auxFloat);
-      if (auxFloat >= 0 && auxFloat <= myTreadmill->maxSpeed_kmph) {
-        myTreadmill->speed_kmph = auxFloat;
+      auxDouble = strtoul(rxbuf, NULL, 10)/10.;
+      if (speedUnit == MPH) auxDouble = mphToKmph(auxDouble);
+      if (auxDouble >= 0 && auxDouble <= myTreadmill->maxSpeed_kmph) {
+        myTreadmill->speed_kmph = auxDouble;
         uart_sendChar(ACK_SET_SPEED);
       } else uart_sendChar(DATA_OUT_OF_RANGE);
       if (txAck) {
@@ -263,9 +263,9 @@ void trackmaster(treadmill_t* myTreadmill, unsigned char c, speedUnit_e speedUni
     if (++i > 3) {
       state = IDLE;
       i = 0;
-      auxFloat = strtoul(rxbuf, NULL, 10)/10.;
-      if (auxFloat >= 0 && auxFloat <= myTreadmill->maxInclination_pt) {
-        myTreadmill->targetInclination_pt = auxFloat;
+      auxDouble = strtoul(rxbuf, NULL, 10)/10.;
+      if (auxDouble >= 0 && auxDouble <= myTreadmill->maxInclination_pt) {
+        myTreadmill->targetInclination_pt = auxDouble;
         uart_sendChar(ACK_SET_ELEVATION);
       } else uart_sendChar(DATA_OUT_OF_RANGE);
       if (txAck) {

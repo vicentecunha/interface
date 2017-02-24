@@ -20,7 +20,8 @@ switches_t getSwitches() {
   dipSwitch |= (PINC & (1 << PINC3)) ? 0 : (1 << 0);
   dipSwitch |= (PINC & (1 << PINC2)) ? 0 : (1 << 1);
   dipSwitch |= (PINC & (1 << PINC1)) ? 0 : (1 << 2);
-  dipSwitch |= (PINC & (1 << PINC0)) ? 0 : (1 << 3);
+//  dipSwitch |= (PINC & (1 << PINC0)) ? 0 : (1 << 3);
+  dipSwitch &= ~(1 << 3);
   dipSwitch |= (PIND & (1 << PIND7)) ? 0 : (1 << 4);
   dipSwitch |= (PIND & (1 << PIND6)) ? 0 : (1 << 5);
   dipSwitch |= (PIND & (1 << PIND5)) ? 0 : (1 << 6);
